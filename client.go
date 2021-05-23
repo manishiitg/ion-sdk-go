@@ -239,7 +239,6 @@ func (c *Client) UnPublish(t *webrtc.RTPTransceiver) error {
 func (c *Client) Close() {
 	log.Debugf("id=%v", c.uid)
 	close(c.notify)
-	c.signal.Close()
 	if c.pub != nil {
 		c.pub.pc.Close()
 	}

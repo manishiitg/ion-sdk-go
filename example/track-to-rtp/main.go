@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	log "github.com/pion/ion-log"
+	ilog "github.com/pion/ion-log"
 	sdk "github.com/pion/ion-sdk-go"
 	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v3"
@@ -14,6 +14,10 @@ import (
 	//"github.com/pion/rtcp"
 
 	"github.com/pion/rtp"
+)
+
+var (
+	log = ilog.NewLoggerWithFields(ilog.DebugLevel, "", nil)
 )
 
 type udpConn struct {
@@ -131,19 +135,44 @@ func main() {
 			if readErr != nil {
 				panic(readErr)
 			}
+<<<<<<< HEAD
 
 			// Unmarshal the packet and update the PayloadType
 			if err = rtpPacket.Unmarshal(b[:n]); err != nil {
 				panic(err)
 			}
 			rtpPacket.PayloadType = c.payloadType
+=======
+			panic(err)
+		}
+	}
+}
+
+func main() {
+	// parse flag
+	var session, addr, file string
+	flag.StringVar(&file, "file", "./file.webm", "Path to the file media")
+	flag.StringVar(&addr, "addr", "localhost:50051", "Ion-sfu grpc addr")
+	flag.StringVar(&session, "session", "test session", "join session name")
+	flag.Parse()
+>>>>>>> 1e8126477a4c28444a8b873d63aa6faf37078108
 
 			// fmt.Println("rtpPacket", rtpPacket)
 
+<<<<<<< HEAD
 			// Marshal into original buffer with updated PayloadType
 			if n, err = rtpPacket.MarshalTo(b); err != nil {
 				panic(err)
 			}
+=======
+	config := sdk.Config{
+		WebRTC: sdk.WebRTCTransportConfig{
+			Configuration: webrtcCfg,
+		},
+	}
+	// new sdk engine
+	e := sdk.NewEngine(config)
+>>>>>>> 1e8126477a4c28444a8b873d63aa6faf37078108
 
 			// Write
 			if _, err = c.conn.Write(b[:n]); err != nil {
@@ -161,6 +190,10 @@ func main() {
 		}
 	}
 	// client join a session
+<<<<<<< HEAD
+=======
+	err = c.Join(session, nil)
+>>>>>>> 1e8126477a4c28444a8b873d63aa6faf37078108
 
 	log.Infof("joining session=%v", session)
 	err = client.Join(session)
