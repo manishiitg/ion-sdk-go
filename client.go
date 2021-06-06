@@ -106,7 +106,7 @@ func NewClient(engine *Engine, addr string, cid string) (*Client, error) {
 	c.pub = NewTransport(PUBLISHER, c.signal, c.cfg)
 	c.sub = NewTransport(SUBSCRIBER, c.signal, c.cfg)
 
-	engine.AddClient(c)
+	// engine.AddClient(c)
 
 	// this will be called when pub add/remove/replace track, but pion never triger, why?
 	// c.pub.pc.OnNegotiationNeeded(c.OnNegotiationNeeded)
@@ -218,7 +218,11 @@ func (c *Client) Join(sid string, config *JoinConfig) error {
 	if err != nil {
 		return err
 	}
-	err = c.signal.Join(sid, c.uid, offer, config)
+	err = c.signal.Join(sid, c.uid, offer)
+	if err == nil {
+		c.sid = sid
+		c.engine.AddClient(c)
+	}
 	return err
 }
 
@@ -267,7 +271,11 @@ func (c *Client) Close() {
 		c.sub.pc.Close()
 	}
 
-	c.engine.DelClient(c)
+	if c.producer != nil {
+		c.producer.Stop()
+	}
+	c.signal.Close()
+	c.engine.RemoveClient(c)
 }
 
 // CreateDataChannel create a custom datachannel
@@ -350,13 +358,13 @@ func (c *Client) OnNegotiationNeeded() {
 	// 1. pub create offer
 	offer, err := c.pub.pc.CreateOffer(nil)
 	if err != nil {
-		log.Errorf("id=%v err=%v", c.uid, err)
+		log.Debugf("id=%v err=%v", c.uid, err)
 	}
 
 	// 2. pub set local sdp(offer)
 	err = c.pub.pc.SetLocalDescription(offer)
 	if err != nil {
-		log.Errorf("id=%v err=%v", c.uid, err)
+		log.Debugf("id=%v err=%v", c.uid, err)
 	}
 
 	log.Debugf("id=%v OnNegotiationNeeded!! c.pub.pc.CreateOffer and send offer=%v", c.uid, offer)
