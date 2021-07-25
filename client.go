@@ -218,7 +218,7 @@ func (c *Client) Join(sid string, config *JoinConfig) error {
 	if err != nil {
 		return err
 	}
-	err = c.signal.Join(sid, c.uid, offer)
+	err = c.signal.Join(sid, c.uid, offer, config)
 	if err == nil {
 		c.sid = sid
 		c.engine.AddClient(c)
