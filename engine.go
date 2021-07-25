@@ -29,7 +29,7 @@ func NewEngine(cfg Config) *Engine {
 		clients: make(map[string]map[string]*Client),
 	}
 	e.cfg = cfg
-
+	log.Init(cfg.Log.Level)
 	return e
 }
 
